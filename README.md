@@ -12,7 +12,6 @@ This is a standalone Next.js backend for exposing public jobs to third-party web
 
 ## Endpoints
 
-- `GET /api/health`
 - `GET /api/jobs`
 - `GET /api/jobs/:slug`
 
