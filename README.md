@@ -33,6 +33,12 @@ This is a standalone Next.js backend for exposing public jobs to third-party web
 4. Install dependencies with `npm install`
 5. Run `npm run dev`
 
+## Docker / Coolify
+
+- Port: `3000`
+- Build method: Dockerfile
+- The repo now includes a production `Dockerfile` for Coolify deployments.
+
 ## Example
 
 ```ts
