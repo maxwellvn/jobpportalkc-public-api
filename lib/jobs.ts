@@ -21,6 +21,7 @@ type JobRow = DbRow & {
   applications_count: Nullable<number>;
   deadline: Nullable<string>;
   is_featured: 0 | 1 | boolean;
+  is_internal_only: 0 | 1 | boolean;
   created_at: Nullable<string>;
   updated_at: Nullable<string>;
   published_at: Nullable<string>;
@@ -56,6 +57,7 @@ export type PublicJob = {
   applications_count: number;
   deadline: string | null;
   is_featured: boolean;
+  is_internal_only: boolean;
   published_at: string | null;
   created_at: string | null;
   updated_at: string | null;
@@ -169,6 +171,7 @@ function toPublicJob(row: JobRow, skillsMap: Map<number, SkillRow>): PublicJob {
     applications_count: Number(row.applications_count ?? 0),
     deadline: row.deadline ?? null,
     is_featured: Boolean(row.is_featured),
+    is_internal_only: Boolean(row.is_internal_only),
     published_at: row.published_at ?? null,
     created_at: row.created_at ?? null,
     updated_at: row.updated_at ?? null,
@@ -183,7 +186,6 @@ function toPublicJob(row: JobRow, skillsMap: Map<number, SkillRow>): PublicJob {
 function buildWhere(filters: Omit<JobFilters, "page" | "limit">) {
   const clauses = [
     "j.status = 'open'",
-    "COALESCE(j.is_internal_only, 0) = 0",
   ];
   const params: Array<string | number> = [];
 
@@ -264,6 +266,7 @@ export async function listPublicJobs(filters: JobFilters) {
         j.applications_count,
         j.deadline,
         j.is_featured,
+        j.is_internal_only,
         j.created_at,
         j.updated_at,
         j.published_at,
@@ -327,6 +330,7 @@ export async function getPublicJob(slugOrId: string) {
         j.applications_count,
         j.deadline,
         j.is_featured,
+        j.is_internal_only,
         j.created_at,
         j.updated_at,
         j.published_at,
@@ -335,7 +339,6 @@ export async function getPublicJob(slugOrId: string) {
       FROM jobs j
       LEFT JOIN departments d ON d.id = j.department_id
       WHERE j.status = 'open'
-        AND COALESCE(j.is_internal_only, 0) = 0
         AND (${isNumericId ? "j.id = ?" : "j.slug = ?"})
       LIMIT 1
     `,
