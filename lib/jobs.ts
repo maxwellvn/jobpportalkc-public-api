@@ -186,6 +186,7 @@ function toPublicJob(row: JobRow, skillsMap: Map<number, SkillRow>): PublicJob {
 function buildWhere(filters: Omit<JobFilters, "page" | "limit">) {
   const clauses = [
     "j.status = 'open'",
+    "COALESCE(j.is_internal_only, 0) = 1",
   ];
   const params: Array<string | number> = [];
 
@@ -339,6 +340,7 @@ export async function getPublicJob(slugOrId: string) {
       FROM jobs j
       LEFT JOIN departments d ON d.id = j.department_id
       WHERE j.status = 'open'
+        AND COALESCE(j.is_internal_only, 0) = 1
         AND (${isNumericId ? "j.id = ?" : "j.slug = ?"})
       LIMIT 1
     `,
